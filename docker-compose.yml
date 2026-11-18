@@ -1,0 +1,54 @@
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-ops-graph-demo}
+      NEO4J_server_memory_heap_max__size: 1G
+      # agents get read-only Cypher: no LOAD CSV from local files (see guard.py)
+      NEO4J_dbms_security_allow__csv__import__from__file__urls: "false"
+    ports:
+      - "127.0.0.1:7474:7474"   # browser UI
+      - "127.0.0.1:7687:7687"   # bolt
+    volumes:
+      - neo4j-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p \"$${NEO4J_AUTH#neo4j/}\" 'RETURN 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+
+  # One-shot job: ingests the three sources, reconciles, embeds the runbooks
+  # (if Ollama answers on the host), then exits. Re-running it is safe.
+  loader:
+    build: .
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    environment:
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-ops-graph-demo}
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["ops-graph", "run", "--data", "/app/data"]
+
+  # Throwaway database for the integration tests, so they never wipe the demo.
+  # docker compose --profile test up -d neo4j-test
+  neo4j-test:
+    profiles: ["test"]
+    image: neo4j:5.26-community
+    environment:
+      NEO4J_AUTH: neo4j/ops-graph-test
+      NEO4J_dbms_security_allow__csv__import__from__file__urls: "false"
+    ports:
+      - "127.0.0.1:7688:7687"
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p ops-graph-test 'RETURN 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+
+volumes:
+  neo4j-data:

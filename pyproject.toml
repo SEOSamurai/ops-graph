@@ -1,0 +1,32 @@
+[project]
+name = "ops-graph"
+version = "0.1.0"
+description = "Ops knowledge graph demo: multi-source ingestion, entity reconciliation with provenance, Neo4j/Cypher impact analysis exposed to AI agents over MCP, plus a small GraphRAG layer."
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Benjamin Bérès" }]
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=2.3.0",
+    "neo4j>=6.4.1",
+    "neo4j-graphrag[ollama]>=1.24.0",
+    "pyyaml>=6.0.3",
+    "rapidfuzz>=3.14.6",
+]
+
+[project.scripts]
+ops-graph = "ops_graph.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.11.23,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: needs a running Neo4j (docker compose up)"]

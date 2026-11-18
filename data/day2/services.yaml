@@ -1,0 +1,99 @@
+# Service catalog (fictional "Acme Mutual" insurer).
+# Owned by the platform team, edited by hand: host names are whatever
+# each team wrote, which is exactly why reconciliation is needed.
+teams:
+  - id: digital
+    name: Digital Channels
+  - id: pricing
+    name: Pricing & Underwriting
+  - id: claims
+    name: Claims
+  - id: core-insurance
+    name: Core Insurance
+  - id: data-office
+    name: Data Office
+
+services:
+  - name: customer-portal
+    owner: digital
+    criticality: high
+    personal_data: true
+    site: par
+    hosts: [web01, web02]
+    depends_on: [quote-engine, claims-api, policy-admin]
+
+  - name: quote-engine
+    owner: pricing
+    criticality: high
+    personal_data: false
+    site: par
+    hosts: [app01]
+    depends_on: [policy-db]
+
+  - name: claims-api
+    owner: claims
+    criticality: high
+    personal_data: true
+    hosts: [srv-par-app02]
+    depends_on: [claims-db, document-store, notification-service]
+
+  - name: fraud-scoring
+    owner: claims
+    criticality: medium
+    personal_data: true
+    hosts: [app01]          # no site given: PAR or LYO? left for review
+    depends_on: [claims-db]
+
+  - name: policy-admin
+    owner: core-insurance
+    criticality: high
+    personal_data: true
+    hosts: [app01.lyo.acme.local]
+    depends_on: [policy-db, document-store]
+
+  - name: billing-batch
+    owner: core-insurance
+    criticality: medium
+    personal_data: true
+    site: par
+    hosts: [bacth01]        # typo kept on purpose
+    depends_on: [policy-db, claims-api]
+
+  - name: notification-service
+    owner: digital
+    criticality: medium
+    personal_data: true
+    site: par
+    hosts: [mq01]
+    depends_on: []
+
+  - name: old-reporting
+    owner: data-office
+    criticality: low
+    personal_data: false
+    status: retired
+    site: par
+    hosts: [report01]
+    depends_on: [policy-db]
+
+databases:
+  - name: policy-db
+    engine: PostgreSQL 15
+    owner: core-insurance
+    personal_data: true
+    host: SRV-PAR-DB01
+  - name: claims-db
+    engine: PostgreSQL 15
+    owner: claims
+    personal_data: true
+    host: db01.par
+  - name: document-store
+    engine: MongoDB 4.4
+    owner: claims
+    personal_data: true
+    host: db02.par.acme.local
+  - name: crm-db
+    engine: Oracle 19c
+    owner: digital
+    personal_data: true
+    host: db1-lyo

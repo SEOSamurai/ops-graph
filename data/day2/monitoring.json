@@ -1,0 +1,27 @@
+{
+  "exporter": "fictional-monitoring 4.2",
+  "exported_at": "2026-11-15T08:30:00Z",
+  "hosts": [
+    {"host": "web01.par.acme.local", "address": "10.10.1.11", "last_seen": "2026-11-15T08:29:41Z"},
+    {"host": "web02.par.acme.local", "address": null, "last_seen": "2026-11-15T08:29:40Z"},
+    {"host": "app01.par.acme.local", "address": "10.10.2.21", "last_seen": "2026-11-15T08:29:38Z"},
+    {"host": "app-02.par.acme.local", "address": null, "last_seen": "2026-11-15T08:29:37Z"},
+    {"host": "app01.lyo.acme.local", "address": "10.20.2.21", "last_seen": "2026-11-15T08:29:35Z"},
+    {"host": "db01.par.acme.local", "address": "10.10.3.31", "last_seen": "2026-11-15T08:29:44Z"},
+    {"host": "db02.par.acme.local", "address": "10.10.3.32", "last_seen": "2026-11-15T08:29:43Z"},
+    {"host": "db1.lyo.acme.local", "address": null, "last_seen": "2026-11-15T08:29:39Z"},
+    {"host": "batch01.par.acme.local", "address": "10.10.4.41", "last_seen": "2026-11-15T08:29:30Z"},
+    {"host": "legacy01.par.acme.local", "address": "10.10.5.51", "last_seen": "2026-11-15T08:28:02Z"},
+    {"host": "ftp01.lyo.acme.local", "address": "10.20.6.61", "last_seen": "2026-06-02T22:14:09Z"},
+    {"host": "report01.par.acme.local", "address": "10.10.7.71", "last_seen": "2026-11-15T08:29:12Z"},
+    {"host": "mq01.par.acme.local", "address": "10.10.8.81", "last_seen": "2026-11-15T08:29:45Z"}
+  ],
+  "alerts": [
+    {"id": "ALR-9001", "target_type": "host", "target": "db01.par.acme.local", "severity": "warning", "message": "Filesystem /var/lib/pgsql at 92%", "raised_at": "2026-11-15T08:10:12Z"},
+    {"id": "ALR-9002", "target_type": "host", "target": "db01.par.acme.local", "severity": "critical", "message": "PostgreSQL replication lag above 60s", "raised_at": "2026-11-15T08:12:40Z"},
+    {"id": "ALR-9003", "target_type": "service", "target": "claims-api", "severity": "critical", "message": "HTTP 5xx rate at 8% over 5 min", "raised_at": "2026-11-15T08:14:03Z"},
+    {"id": "ALR-9004", "target_type": "service", "target": "customer-portal", "severity": "warning", "message": "p95 latency 4.2s (SLO 1.5s)", "raised_at": "2026-11-15T08:15:27Z"},
+    {"id": "ALR-9005", "target_type": "host", "target": "mq01.par.acme.local", "severity": "warning", "message": "Queue notifications.outbound depth above 10000", "raised_at": "2026-11-15T08:05:51Z"},
+    {"id": "ALR-9006", "target_type": "host", "target": "legacy01.par.acme.local", "severity": "info", "message": "CPU idle 99% for 30 days", "raised_at": "2026-11-14T00:00:00Z"}
+  ]
+}
